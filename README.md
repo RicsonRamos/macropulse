@@ -62,12 +62,25 @@ VIX: 32 | Yield Curve: -0.75%
 
 ---
 
-### Interface Overview
-![Global Macro](./docs/globalmacro.png)
-![Markets](./docs/markets.png)
-![Global Tracker](./docs/globaltracker.png)
-![Intelligence](./docs/feedinteligence.png)
+### 🖥️ Interface Overview
 
+The following core views provide everything from a high-level macroeconomic panorama to granular market signals.
+
+#### 1. Global Macro Dashboard
+![Global Macro](./docs/globalmacro.png)
+*Central monitoring of leading indicators, yield curves, and global inflation, enabling the automated identification of the current economic regime.*
+
+#### 2. Market Analytics
+![Markets](./docs/markets.png)
+*Real-time visualization of core market indicators across Equities, FX, and Crypto, featuring volatility tracking and statistical mean deviation.*
+
+#### 3. Global Activity Tracker
+![Global Tracker](./docs/globaltracker.png)
+*Real-world activity monitoring via live iframes for aviation (FlightRadar24) and maritime shipping, providing raw data to validate global growth theses.*
+
+#### 4. Intelligence & Sentiment Feed
+![Intelligence](./docs/feedinteligence.png)
+*AI-driven insight engine that processes real-time News APIs through LLMs to generate sentiment scores and proactive macroeconomic alerts.*
 
 ---
 ## How It Works (TL;DR)
