@@ -63,10 +63,10 @@ VIX: 32 | Yield Curve: -0.75%
 ---
 
 ### Interface Overview
-![Global Macro](.docs/globalmacro.png)
-![Markets](.docs/markets.png)
-![Global Tracker](.docs/globaltracker.png)
-![Intelligence](.docs/feedinteligence.png)
+![Global Macro](./docs/globalmacro.png)
+![Markets](./docs/markets.png)
+![Global Tracker](./docs/globaltracker.png)
+![Intelligence](./docs/feedinteligence.png)
 
 
 ---
