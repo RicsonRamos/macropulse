@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MacroPulse Global | Professional Terminal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Geist+Mono:wght@100..900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Alpine.js — lightweight reactive state (no heavy framework needed) -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- TradingView Lightweight Charts (Pinned Version) -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body class="dark-theme fade-in">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i data-lucide="activity" class="icon-logo"></i>
+                <span>MacroPulse</span>
+            </div>
+            
+            <!-- Asset Search -->
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="text" id="asset-search" placeholder="SEARCH ASSETS..." autocomplete="off">
+                    <div class="search-command">⌘K</div>
+                </div>
+                <div id="search-results" class="search-results hidden"></div>
+            </div>
+
+            <nav id="sidebar-nav">
+                <a href="#" class="nav-item active" data-tab="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="#" class="nav-item" data-tab="markets"><i data-lucide="trending-up"></i> Markets</a>
+                <a href="#" class="nav-item" data-tab="macro"><i data-lucide="globe"></i> Global Macro</a>
+                <a href="#" class="nav-item" data-tab="tracker"><i data-lucide="radar"></i> Global Tracker</a>
+                <a href="#" class="nav-item" data-tab="intelligence"><i data-lucide="newspaper"></i> Intelligence</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="btn-etl" class="btn-primary">
+                    <i data-lucide="refresh-cw"></i> <span>Update Database</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1>Global Intelligence <span class="status-badge" id="regime-badge">Loading...</span></h1>
+                    <p class="text-muted" id="regime-explanation">Evaluating global market conditions...</p>
+                    <span id="last-updated-label" class="last-updated-label">Awaiting data...</span>
+                </div>
+                <div class="header-right" style="display:flex; gap:1.5rem; align-items:center;">
+                    <!-- Alert Badge (Alpine.js reactive) -->
+                    <div
+                        x-data="{ open: false, count: 0, alerts: [] }"
+                        x-init="
+                            window.addEventListener('macropulse:alerts', e => {
+                                alerts = e.detail || [];
+                                count  = alerts.filter(a => a.level === 'CRITICAL' || a.level === 'WARNING').length;
+                            });
+                        "
+                        style="position:relative;"
+                    >
+                        <button
+                            @click="open = !open"
+                            class="alert-badge-btn"
+                            :class="count > 0 ? 'has-alerts' : ''"
+                        >
+                            <i data-lucide="bell" style="width:18px;height:18px;"></i>
+                            <span x-show="count > 0" x-text="count" class="alert-count-dot"></span>
+                        </button>
+
+                        <!-- Alert Dropdown -->
+                        <div x-show="open" @click.outside="open = false" class="alert-dropdown glass">
+                            <div class="alert-dropdown-header">
+                                <span class="label">⚠️ Active Alerts</span>
+                                <button @click="open = false" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;">&times;</button>
+                            </div>
+                            <template x-if="alerts.length === 0">
+                                <p class="alert-empty">No active alerts. Markets are calm.</p>
+                            </template>
+                            <template x-for="alert in alerts" :key="alert.code">
+                                <div class="alert-item" :class="'alert-' + alert.level.toLowerCase()">
+                                    <div class="alert-title" x-text="alert.title"></div>
+                                    <div class="alert-msg" x-text="alert.message"></div>
+                                    <div class="alert-impl" x-text="'→ ' + alert.implication"></div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="risk-card">
+                        <span class="label">Risk Score</span>
+                        <div class="risk-value-container">
+                            <span id="risk-value" class="value">--</span>
+                            <div class="progress-bar"><div id="risk-progress" class="progress"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- View: Dashboard (Default) -->
+            <div id="view-dashboard" class="tab-content active">
+                <!-- Strategic Signal Section (High Impact) -->
+                <section class="strategy-row">
+                    <div class="strategy-card glass slide-up">
+                        <div class="strategy-header">
+                            <div class="header-main">
+                                <i data-lucide="brain-circuit" class="text-info icon-pulse"></i>
+                                <div>
+                                    <span class="label">Macro Thesis & Decision Layer</span>
+                                    <h3 id="strategy-title">Evaluating Consensus...</h3>
+                                </div>
+                            </div>
+                            <div id="strategy-signal-badge" class="signal-badge">NEUTRAL</div>
+                        </div>
+                        <div class="strategy-body">
+                            <p id="ai-thesis-text" class="thesis-text">"Analyzing live news feeds and cross-asset correlations to synthesize your tactical bias..."</p>
+                            <div class="action-plan">
+                                <span class="action-label">Suggested Actions:</span>
+                                <ul id="strategy-actions" class="action-list">
+                                    <li>Monitoring market regime shift...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Composition (Breakdown) -->
+                    <div class="risk-breakdown-card glass">
+                        <div class="header-simple">
+                            <i data-lucide="shield-alert" class="text-warning"></i>
+                            <span class="label">Risk Score Composition</span>
+                        </div>
+                        <div id="risk-composition-bars" class="composition-container">
+                            <!-- Bars will be injected by JS -->
+                            <div class="comp-item"><span class="comp-label">VIX</span><div class="comp-bar-bg"><div class="comp-bar" style="width: 40%"></div></div></div>
+                            <div class="comp-item"><span class="comp-label">Macro</span><div class="comp-bar-bg"><div class="comp-bar" style="width: 25%"></div></div></div>
+                            <div class="comp-item"><span class="comp-label">AI Sent.</span><div class="comp-bar-bg"><div class="comp-bar" style="width: 20%"></div></div></div>
+                            <div class="comp-item"><span class="comp-label">Satellite</span><div class="comp-bar-bg"><div class="comp-bar" style="width: 15%"></div></div></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- KPI Cards -->
+                <section class="kpi-grid">
+                    <div class="kpi-card glass slide-up" style="animation-delay: 0.1s;">
+                        <div class="kpi-header">
+                            <div>
+                                <i data-lucide="line-chart" class="text-info"></i>
+                                <span class="label">S&P 500</span>
+                            </div>
+                            <button class="info-btn" data-info="sp500"><i data-lucide="help-circle"></i></button>
+                        </div>
+                        <div class="kpi-value" id="kpi-sp500">0.00%</div>
+                    </div>
+                    <div class="kpi-card glass">
+                        <div class="kpi-header">
+                            <div>
+                                <i data-lucide="activity" class="text-warning"></i>
+                                <span class="label">VIX Index</span>
+                            </div>
+                            <button class="info-btn" data-info="vix"><i data-lucide="help-circle"></i></button>
+                        </div>
+                        <div class="kpi-value" id="kpi-vix">0.00</div>
+                    </div>
+                    <div class="kpi-card glass">
+                        <div class="kpi-header">
+                            <div>
+                                <i data-lucide="coins" class="text-gold"></i>
+                                <span class="label">Gold Price</span>
+                            </div>
+                            <button class="info-btn" data-info="gold"><i data-lucide="help-circle"></i></button>
+                        </div>
+                        <div class="kpi-value" id="kpi-gold">$0,000</div>
+                    </div>
+                    <div class="kpi-card glass">
+                        <div class="kpi-header">
+                            <div>
+                                <i data-lucide="bitcoin" class="text-warning"></i>
+                                <span class="label">Bitcoin</span>
+                            </div>
+                            <button class="info-btn" data-info="btc"><i data-lucide="help-circle"></i></button>
+                        </div>
+                        <div class="kpi-value" id="kpi-btc">0.00%</div>
+                    </div>
+                </section>
+
+                <div class="section-divider">
+                    <span class="divider-text"><i data-lucide="flag"></i> Brasil Intelligence</span>
+                </div>
+
+                <section class="kpi-grid">
+                    <div class="kpi-card glass">
+                        <div class="kpi-header">
+                            <div>
+                                <i data-lucide="trending-up" class="text-success"></i>
+                                <span class="label">Ibovespa</span>
+                            </div>
+                            <button class="info-btn" data-info="ibov"><i data-lucide="help-circle"></i></button>
+                        </div>
+                        <div class="kpi-value" id="kpi-ibov">0.00%</div>
+                    </div>
+                    <div class="kpi-card glass">
+                        <div class="kpi-header">
+                            <div>
+                                <i data-lucide="landmark" class="text-info"></i>
+                                <span class="label">Taxa Selic</span>
+                            </div>
+                            <button class="info-btn" data-info="selic"><i data-lucide="help-circle"></i></button>
+                        </div>
+                        <div class="kpi-value" id="kpi-selic">0.00%</div>
+                    </div>
+                    <div class="kpi-card glass">
+                        <div class="kpi-header">
+                            <div>
+                                <i data-lucide="dollar-sign" class="text-warning"></i>
+                                <span class="label">USD / BRL</span>
+                            </div>
+                            <button class="info-btn" data-info="usdbrl"><i data-lucide="help-circle"></i></button>
+                        </div>
+                        <div class="kpi-value" id="kpi-usdbrl">R$ 0,00</div>
+                    </div>
+                    <div class="kpi-card glass">
+                        <div class="kpi-header">
+                            <div>
+                                <i data-lucide="gauge" class="text-info"></i>
+                                <span class="label">Fear & Greed</span>
+                            </div>
+                            <button class="info-btn" data-info="fng"><i data-lucide="help-circle"></i></button>
+                        </div>
+                        <div class="kpi-value" id="kpi-fng">0</div>
+                    </div>
+                </section>
+
+                <!-- Dashboard Content -->
+                <section class="dashboard-grid">
+                    <div class="chart-container glass">
+                        <div class="chart-header">
+                            <h3>Market Momentum & Volatility</h3>
+                            <div class="chart-actions">
+                                <span class="tag">12 Month History</span>
+                            </div>
+                        </div>
+                        <div class="canvas-wrapper">
+                            <div id="mainChart" style="height: 100%; width: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="news-container glass">
+                        <div class="news-header">
+                            <h3>Live Intelligence</h3>
+                        </div>
+                        <div class="news-feed" id="news-feed">
+                            <!-- News items will be injected here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- View: Markets -->
+            <div id="view-markets" class="tab-content">
+                <div class="grid-layout">
+                    <div class="glass full-width">
+                        <h3>Detailed Market Terminals</h3>
+                        <div id="markets-grid" class="markets-grid-container">
+                            <!-- Market cards injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Macro -->
+            <div id="view-macro" class="tab-content">
+                <div class="glass full-width">
+                    <h3>Global Macro Indicators</h3>
+                    <div id="macro-content" class="macro-view-container">
+                        <p class="text-muted">Analyzing global liquidity and central bank policies...</p>
+                        <!-- Macro data visualizers here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Tracker -->
+            <div id="view-tracker" class="tab-content">
+                <div class="tracker-layout">
+                    <div class="glass tracker-card">
+                        <div class="tracker-header">
+                            <h3><i data-lucide="plane"></i> Air Traffic (Global)</h3>
+                            <a href="https://www.flightradar24.com" target="_blank" class="news-link">Open Full Radar &rarr;</a>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe id="fr24-iframe" src="https://globe.adsbexchange.com/?embed=1&lat=-15&lon=-47&z=4" width="100%" height="100%" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    <div class="glass tracker-card">
+                        <div class="tracker-header">
+                            <h3><i data-lucide="ship"></i> Marine Traffic (Global)</h3>
+                            <a href="https://www.marinetraffic.com" target="_blank" class="news-link">Open MarineTraffic &rarr;</a>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe id="mt-iframe" 
+                                    src="https://www.marinetraffic.com/en/ais/embed/zoom:3/centery:0/centerx:0/maptype:4/shownames:false/mmsi:0/shipid:0/fleet:/fleet_id:/vsl_type:/vsl_type_id:/showmenu:/remember:false" 
+                                    width="100%" height="100%" frameborder="0"></iframe>
+                        </div>
+                        <p class="tracker-hint">Dica: Se o mapa não aparecer, desative o 'Bloqueio de Conteúdo' do seu navegador para este site.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View: Intelligence -->
+            <div id="view-intelligence" class="tab-content">
+                <div class="dashboard-grid expanded">
+                    <div class="glass">
+                        <h3>Deep Analysis</h3>
+                        <div id="intelligence-analysis" class="analysis-body">
+                            <!-- Analysis content -->
+                        </div>
+                    </div>
+                    <div class="news-container glass">
+                        <h3>Full Feed</h3>
+                        <div id="full-news-feed" class="news-feed"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast">ETL Process Started...</div>
+    
+    <!-- Info Modal (Guide) -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2 id="modal-title">Indicator Guide</h2>
+                <button id="close-modal">&times;</button>
+            </div>
+            <div id="modal-body" class="modal-body">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <div class="scanlines"></div>
+    <div class="noise"></div>
+
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+        startLastUpdatedTicker();
+    </script>
+</body>
+</html>

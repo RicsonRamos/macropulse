@@ -1,0 +1,26 @@
+# Backend Core
+fastapi>=0.111.0
+uvicorn>=0.30.1
+SQLAlchemy>=2.0.30
+psycopg2-binary>=2.9.9
+pydantic>=2.7.3
+requests>=2.32.3
+pandas>=2.2.2
+python-dotenv>=1.0.1
+apscheduler>=3.10.4
+redis>=5.0.4
+
+# Data Sources
+yfinance>=0.2.38
+fredapi>=0.5.1
+pyopensky>=2.16.0
+httpx>=0.27.0
+beautifulsoup4>=4.12.3
+
+# Analysis
+numpy>=2.0.2
+
+# Tests
+pytest>=8.2.2
+pytest-mock>=3.14.0
+pytest-asyncio>=0.23.7
